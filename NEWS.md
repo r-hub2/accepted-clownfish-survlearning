@@ -1,3 +1,10 @@
+# survlearning 0.2.3
+
+* Make the interpretation/reliability workflow vignette fully executable and
+  self-contained, including data, new profiles and explicit checkpoint seeds.
+  Verify the installed extracted vignette code in a separate R session, including
+  the check mode that runs vignette scripts without rebuilding their outputs.
+
 # survlearning 0.2.2
 
 * Reject infeasible and non-finite SVM solver output before returning a model.

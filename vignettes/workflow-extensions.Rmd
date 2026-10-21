@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height = 4)
+library(survlearning)
 ```
 
 The executable English example is
@@ -18,8 +19,25 @@ It uses the Cox and parametric AFT engines already supplied by the mandatory
 
 ## Interpreting a fixed predictor
 
+The following small example is self-contained. Censoring is generated independently
+of failure conditional on the two predictors, which are fixed at the time origin.
+
+```{r data}
+set.seed(20261026)
+d <- data.frame(load = runif(300, -1, 1), design = rbinom(300, 1, .5))
+failure_time <- rexp(300, rate = .02 * exp(.8 * d$load - .3 * d$design))
+censor_time <- pmin(80, rexp(300, rate = .02 * exp(.6 * d$load)))
+d$time <- pmin(failure_time, censor_time)
+d$event <- as.integer(failure_time <= censor_time)
+train <- d[1:200, ]
+test <- d[201:300, ]
+f <- Surv(time, event) ~ load + design
+fit <- surv_fit(f, train, "cox")
+profiles <- data.frame(load = c(-.5, .5), design = c(0, 1))
+```
+
 ```{r}
-importance <- surv_importance(fit, test, n_repeats = 10, seed = 10)
+importance <- surv_importance(fit, test, n_repeats = 3, seed = 10)
 effects <- surv_ale(fit, test, variable = "load", bins = 10,
   type = "failure", time = 10)
 plot(importance)
@@ -78,14 +96,17 @@ through `censoring`; it is refitted on each analysis fold, never globally.
 ## Local parallel execution and recovery
 
 ```{r}
+checkpoint <- tempfile("survlearning-vignette-")
 tuned <- surv_tune(f, train, "aft",
-  grid = list(distribution = c("weibull", "lognormal")), folds = 3,
-  workers = 2, checkpoint = "owned-search", progress = TRUE)
+  grid = list(distribution = c("weibull", "lognormal")), folds = 2,
+  workers = 2, seed = 20, checkpoint = checkpoint)
 # Repeat exactly to reuse committed folds and the completed winning refit.
 resumed <- surv_tune(f, train, "aft",
-  grid = list(distribution = c("weibull", "lognormal")), folds = 3,
-  workers = 2, checkpoint = "owned-search")
+  grid = list(distribution = c("weibull", "lognormal")), folds = 2,
+  workers = 2, seed = 20, checkpoint = checkpoint)
 resumed$execution
+stopifnot(resumed$execution$computed_jobs == 0L,
+  resumed$execution$refit_reused)
 ```
 
 Defaults remain serial and disk-free. Local PSOCK tasks are grouped by analysis
@@ -99,3 +120,10 @@ after a hard crash, confirm no process remains before removing a stale lock.
 Workers duplicate data and numerical workspaces. Set engine `threads = 1` when
 using multiple workers, and choose their number to fit available memory.
 Neither a universal speedup nor aggregate-memory monitoring is promised.
+
+```{r cleanup, include=FALSE}
+target <- normalizePath(checkpoint, winslash = "/", mustWork = TRUE)
+parent <- normalizePath(tempdir(), winslash = "/", mustWork = TRUE)
+stopifnot(startsWith(tolower(target), paste0(tolower(parent), "/")))
+unlink(target, recursive = TRUE)
+```

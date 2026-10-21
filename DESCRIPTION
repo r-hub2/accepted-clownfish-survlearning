@@ -1,7 +1,7 @@
 Package: survlearning
 Type: Package
 Title: Unified Statistical Learning for Survival and Reliability
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: person("Pedro Luiz", "Ramos", email = "pedro.ramos@uc.cl",
     role = c("aut", "cre"))
 Description: Provides a small formula-based interface for fitting, tuning,
@@ -16,8 +16,6 @@ Description: Provides a small formula-based interface for fitting, tuning,
     survival forests as described by Ishwaran et al. (2008)
     <doi:10.1214/08-AOAS169>.
 License: GPL (>= 3)
-SystemRequirements: xz (only to build the optional clarabel dependency
-        in this auxiliary checking environment)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Imports: stats, survival, graphics, utils, parallel, tools, withr (>=
@@ -31,6 +29,6 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: no
-Packaged: 2026-10-21 16:42:02 UTC; pedro
+Packaged: 2026-10-21 16:51:58 UTC; pedro
 Author: Pedro Luiz Ramos [aut, cre]
 Maintainer: Pedro Luiz Ramos <pedro.ramos@uc.cl>
