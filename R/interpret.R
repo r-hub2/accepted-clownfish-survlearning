@@ -25,8 +25,7 @@ surv_importance <- function(object, newdata, variables = NULL,
   object <- .evaluation_object(object)
   .integer_scalar(n_repeats, "n_repeats", 1L)
   .validate_seed(seed)
-  formula <- if (is.null(object$input_formula)) object$formula else object$input_formula
-  predictors <- all.vars(formula[[3L]])
+  predictors <- .interpret_predictors(object)
   if (is.null(variables)) variables <- predictors
   if (is.character(variables)) variables <- stats::setNames(as.list(variables), variables)
   if (!is.list(variables) || !length(variables) || is.null(names(variables)) ||
@@ -91,9 +90,8 @@ surv_ale <- function(object, newdata, variable, bins = 10L,
   object <- .evaluation_object(object)
   .integer_scalar(bins, "bins", 2L)
   type <- match.arg(type, c("risk", "failure"))
-  formula <- if (is.null(object$input_formula)) object$formula else object$input_formula
   if (!is.character(variable) || length(variable) != 1L || is.na(variable) ||
-      !variable %in% all.vars(formula[[3L]]) || !variable %in% names(newdata)) {
+      !variable %in% .interpret_predictors(object) || !variable %in% names(newdata)) {
     stop("Choose one original predictor column for 'variable'.", call. = FALSE)
   }
   x <- newdata[[variable]]
@@ -138,6 +136,21 @@ surv_ale <- function(object, newdata, variable, bins = 10L,
     target = if (type == "risk") "model-specific increasing-risk score" else "failure probability",
     assumptions = "Predictive, not causal; binwise first-order ALE, without refitting or confidence intervals")
   out
+}
+
+.interpret_predictors <- function(object) {
+  # Saved training terms resolve dot and retain raw names inside transformations.
+  terms <- object$design$terms
+  if (!is.null(terms)) {
+    predictors <- all.vars(stats::delete.response(terms))
+  } else {
+    formula <- if (is.null(object$input_formula)) object$formula else object$input_formula
+    predictors <- all.vars(formula[[3L]])
+    if ("." %in% predictors) {
+      stop("Saved dot-formula model has no resolved training terms; refit before interpretation.", call. = FALSE)
+    }
+  }
+  setdiff(predictors, all.vars(object$formula[[2L]]))
 }
 
 #' Plot Permutation Importance

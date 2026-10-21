@@ -18,26 +18,48 @@
 }
 
 .xgboost_margin <- function(engine, x) {
-  as.numeric(stats::predict(engine, newdata = x, outputmargin = TRUE))
+  lp <- as.numeric(stats::predict(engine, newdata = x, outputmargin = TRUE))
+  if (any(!is.finite(lp))) stop("XGBoost log risks/locations must be finite.", call. = FALSE)
+  lp
 }
 
 .xgboost_baseline <- function(engine, x, y) {
   lp <- .xgboost_margin(engine, x)
-  center <- max(lp)
+  if (length(lp) != nrow(y) || any(!is.finite(lp))) {
+    stop("XGBoost baseline requires one finite margin per training row.", call. = FALSE)
+  }
+  # Center before log accumulation so a large common margin cannot erase log counts.
+  center <- min(lp) / 2 + max(lp) / 2
+  lp <- lp - center
   order <- order(y[, 1L])
   time <- y[order, 1L]
   first <- !duplicated(time)
-  at_risk <- rev(cumsum(rev(exp(lp[order] - center))))[first]
+  log_at_risk <- rev(.neural_logcumsumexp(rev(lp[order])))[first]
   events <- as.numeric(rowsum(y[order, 2L], cumsum(first), reorder = FALSE))
-  list(time = time[first], cumhaz = cumsum(events / at_risk), center = center)
+  # Zero-event times contribute -Inf, including late censor-only risk sets.
+  log_increment <- log(events) - log_at_risk
+  list(time = time[first], logcumhaz = .neural_logcumsumexp(log_increment),
+    center = center, ties = "breslow")
 }
 
 .xgboost_survival <- function(object, x, times) {
   lp <- .xgboost_margin(object$engine, x)
+  if (any(!is.finite(lp))) stop("XGBoost log risks/locations must be finite.", call. = FALSE)
   if (object$method == "xgboost_cox") {
     baseline <- object$baseline
-    cumulative <- c(0, baseline$cumhaz)[findInterval(times, baseline$time) + 1L]
-    return(exp(-exp(outer(lp - baseline$center, log(cumulative), "+"))))
+    if (!is.null(baseline$logcumhaz)) {
+      log_hazard <- baseline$logcumhaz
+    } else {
+      # Preserve finite saved baselines; a corrupted old baseline cannot be recovered here.
+      if (any(!is.finite(baseline$cumhaz)) || any(baseline$cumhaz < 0)) {
+        stop("Saved XGBoost baseline is non-finite; rebuild it from the original training data or refit the model.", call. = FALSE)
+      }
+      log_hazard <- log(baseline$cumhaz)
+    }
+    cumulative <- c(-Inf, log_hazard)[findInterval(times, baseline$time) + 1L]
+    out <- exp(-exp(outer(lp - baseline$center, cumulative, "+")))
+    out[, cumulative == -Inf] <- 1
+    return(out)
   }
   z <- outer(lp, log(times), function(location, time) (time - location) / object$params$scale)
   switch(object$params$distribution,

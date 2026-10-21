@@ -227,7 +227,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $checkpoint</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;D:/Codex/112-survlearning/dev/tmp/RtmpiCyHud/survlearning-vignette-c248381113eb&quot;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;D:/Codex/112-survlearning/dev/tmp/Rtmpy2OAJv/survlearning-vignette-780ca062b8d&quot;</span></span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $resumption</span></span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;same data, row order, grid, resamples, metric, settings, R/platform and engine versions&quot;</span></span>
@@ -236,7 +236,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $elapsed_seconds</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.03</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(resumed<span class="sc">$</span>execution<span class="sc">$</span>computed_jobs <span class="sc">==</span> 0L,</span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  resumed<span class="sc">$</span>execution<span class="sc">$</span>refit_reused)</span></code></pre></div>
 <p>Defaults remain serial and disk-free. Local PSOCK tasks are grouped by analysis fold to preserve SVM workspace reuse. Data, formulas, row order, fold plan, parameters, seeds, RNG/contrast settings, and software versions must match a checkpoint. Captured custom closures are not portable. Failed folds remain ineligible; <code>retry_failed = TRUE</code> explicitly retries their records. Within-fold solver warm-start histories are rebuilt, not restored. Only one live search may own a directory. Ordinary errors release its lock; after a hard crash, confirm no process remains before removing a stale lock. Workers duplicate data and numerical workspaces. Set engine <code>threads = 1</code> when using multiple workers, and choose their number to fit available memory. Neither a universal speedup nor aggregate-memory monitoring is promised.</p>

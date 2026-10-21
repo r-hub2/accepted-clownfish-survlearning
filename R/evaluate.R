@@ -461,8 +461,9 @@ surv_evaluate <- function(object, newdata, metrics = "harrell", times = NULL,
 #' @details Groups are formed separately at each horizon using empirical
 #'   midrank quantile bins in predicted survival. Identical probabilities are
 #'   never split; fewer than
-#'   `groups` groups can result. Observed survival is a group-specific KM, with
-#'   95 percent log-log Greenwood intervals from [survival::survfit()]. No KM
+#'   `groups` groups can result. Without a censoring model, observed survival
+#'   is a group-specific KM, with log-log Greenwood intervals at `conf_level`
+#'   from [survival::survfit()]. No KM
 #'   tail extrapolation is performed. Groups with fewer than 10 observations,
 #'   fewer than 3 events by the horizon, or fewer than 5 at risk trigger a low
 #'   support warning. Grouping is descriptive, not a test of calibration or a
@@ -474,9 +475,14 @@ surv_evaluate <- function(object, newdata, metrics = "harrell", times = NULL,
 #'   exclude event/G fitting and group-selection uncertainty. Risk scores are not converted
 #'   to fake probabilities. Training-data calibration is resubstitution.
 #' @return A `survlearning_calibration` data.frame with `time`, `group`,
-#'   `predicted` (mean predicted survival), `observed` (KM survival), `lower`,
+#'   `predicted` (mean predicted survival), `observed` (KM survival without a
+#'   censoring model, normalized IPCW survival otherwise), `lower`,
 #'   `upper`, `n`, `events` (events by the horizon), `n_risk` (just before the
 #'   horizon), `status`, and `message`. Unsupported group tails are NA.
+#'   The IPCW branch also returns `effective_n` (squared total weight divided
+#'   by the sum of squared weights) and `bootstrap_valid` (number of usable
+#'   bootstrap estimates). Its intervals are percentile bootstrap intervals
+#'   at `conf_level`, or NA when `n_boot = 0` or bootstrap support is inadequate.
 #' @export
 #' @examples
 #' fit <- surv_fit(Surv(time, status) ~ age + karno, survival::veteran)

@@ -1,3 +1,11 @@
+# survlearning 0.2.5
+
+* Center XGBoost Cox training margins before log-domain Breslow accumulation.
+  Preserve the same estimator while avoiding loss of small risk-set corrections
+  under very large common offsets. Retain finite saved-baseline compatibility.
+* Add independent common-offset regressions and a non-default confidence-level
+  calibration oracle. No methods, tuning grids or observations are removed.
+
 # survlearning 0.2.3
 
 * Make the interpretation/reliability workflow vignette fully executable and
@@ -155,4 +163,18 @@
 * Optional backends for penalized AFT/Cox, trees, forests, boosting, and SVM.
 * No hidden calibration, automatic subsampling, or new SVM optimizer.
 * Spanish sequential reliability example and automated regression tests.
+
+# survlearning 0.2.4
+
+- Resolve dot formulas against the original outcome before fitting Cox censoring
+  models; original outcome columns no longer leak into the censoring design.
+- Compute XGBoost Cox Breslow increments and cumulative hazards in log space.
+  Finite saved baselines remain supported; corrupted non-finite old baselines
+  require reconstruction from their original training data.
+- Use resolved training terms for permutation importance and ALE, including
+  dot formulas, raw transformed predictors and interactions.
+- Clarify both branches of calibration output and configurable intervals.
+- Correct the article's solver certificate export, installation/preflight,
+  capacity labels, timing descriptions and related-software positioning.
+  The statistical methods, tuning grids and full application cohort are retained.
 

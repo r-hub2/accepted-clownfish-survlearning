@@ -54,15 +54,8 @@ surv_censor_fit <- function(formula, data, method = "cox", impute = "none") {
       fit
     })
   } else {
-    if (any(c(".sl_c_time", ".sl_c_event") %in% names(data))) {
-      stop("Reserved censoring design column names already exist in data.", call. = FALSE)
-    }
-    working <- data
-    working$.sl_c_time <- y[, 1L]
-    working$.sl_c_event <- 1L
-    design_formula <- formula
-    design_formula[[2L]] <- quote(survival::Surv(.sl_c_time, .sl_c_event))
-    prepared <- .prepare_design(design_formula, working, impute)
+    # Resolve dot and imputation before replacing the original response.
+    prepared <- .prepare_design(formula, data, impute, require_event = FALSE)
     out$design <- prepared$design
     out$constant <- !out$censorings
     if (!out$constant) {

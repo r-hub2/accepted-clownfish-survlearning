@@ -1,7 +1,7 @@
 Package: survlearning
 Type: Package
 Title: Unified Statistical Learning for Survival and Reliability
-Version: 0.2.3
+Version: 0.2.5
 Authors@R: person("Pedro Luiz", "Ramos", email = "pedro.ramos@uc.cl",
     role = c("aut", "cre"))
 Description: Provides a small formula-based interface for fitting, tuning,
@@ -11,10 +11,7 @@ Description: Provides a small formula-based interface for fitting, tuning,
     Distinguishes risk scores, survival probabilities and median survival
     times. Includes reference models, forests, boosting and neural survival
     models through optional engines, with training-only preprocessing and
-    explicit prediction capabilities. Methods include penalized Cox regression
-    as described by Simon et al. (2011) <doi:10.18637/jss.v039.i05> and random
-    survival forests as described by Ishwaran et al. (2008)
-    <doi:10.1214/08-AOAS169>.
+    explicit prediction capabilities.
 License: GPL (>= 3)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
@@ -29,6 +26,6 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: no
-Packaged: 2026-10-21 16:51:58 UTC; pedro
+Packaged: 2026-10-21 23:07:09 UTC; pedro
 Author: Pedro Luiz Ramos [aut, cre]
 Maintainer: Pedro Luiz Ramos <pedro.ramos@uc.cl>
