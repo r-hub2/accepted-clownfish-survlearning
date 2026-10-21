@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Evaluation and validation for right-censored outcomes</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Evaluation and validation for right-censored outcomes</h1>
+
+
+
+<div id="define-the-prediction-target" class="section level2">
+<h2>Define the prediction target</h2>
+<p>Write <span class="math inline">\(Y_i=\min(T_i,C_i)\)</span> and <span class="math inline">\(\delta_i=I(T_i\leq C_i)\)</span>. A risk score <span class="math inline">\(r_i\)</span> orders failures; <span class="math inline">\(\widehat S_i(t)\)</span> estimates <span class="math inline">\(P(T_i&gt;t\mid x_i)\)</span>. These outputs are not interchangeable. Risk-only models cannot be evaluated as probability models without an additional, explicitly trained calibration procedure.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> survival<span class="sc">::</span>veteran</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">17</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(d)), <span class="dv">100</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> d[id, ]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> d[<span class="sc">-</span>id, ]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">Surv</span>(time, status) <span class="sc">~</span> age <span class="sc">+</span> karno</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">surv_fit</span>(f, train, <span class="st">&quot;aft&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">surv_score</span>(fit, test)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.7052469</span></span></code></pre></div>
+</div>
+<div id="discrimination-and-probability-accuracy" class="section level2">
+<h2>Discrimination and probability accuracy</h2>
+<p>With <span class="math inline">\(a(r_i,r_j)=I(r_i&gt;r_j)+\tfrac12 I(r_i=r_j)\)</span>, Harrell’s index estimates correct ordering among comparable pairs. It is not sensitivity, a percentage of correctly predicted failure times, or a calibration measure.</p>
+<p>Let <span class="math inline">\(\widehat G\)</span> be a marginal censoring Kaplan-Meier estimate. Truncated IPCW concordance uses <span class="math inline">\(w_i=\delta_i I(Y_i\leq\tau)/\widehat G(Y_i-)^2\)</span>:</p>
+<p><span class="math display">\[
+\widehat C_{\mathrm{IPCW}}(\tau)=
+\frac{\sum_{i,j}w_i I(Y_i&lt;Y_j)a(r_i,r_j)}
+{\sum_{i,j}w_i I(Y_i&lt;Y_j)}.
+\]</span></p>
+<p>The implementation uses strict observed-time comparisons and half credit for tied risk scores. Declare <code>tau</code>; do not extend it into an unsupported censoring tail. The censoring assumptions still matter. <a href="https://doi.org/10.1002/sim.4154">Uno et al. (2011)</a> motivate IPCW concordance.</p>
+<p>For a horizon <span class="math inline">\(t\)</span>, cumulative/dynamic AUC compares failures by <span class="math inline">\(t\)</span> with subjects surviving past <span class="math inline">\(t\)</span>, weighting observed cases and controls for censoring. Brier error evaluates probabilities instead:</p>
+<p><span class="math display">\[
+\widehat{BS}(t)=\frac1n\sum_{i=1}^n\left[
+\frac{\delta_i I(Y_i\leq t)\widehat S_i(t)^2}{\widehat G(Y_i-)}+
+\frac{I(Y_i&gt;t)\{1-\widehat S_i(t)\}^2}{\widehat G(t)}
+\right].
+\]</span></p>
+<p>For a supplied grid spanning <span class="math inline">\([a,b]\)</span>,</p>
+<p><span class="math display">\[
+\widehat{IBS}_{[a,b]}=\frac1{b-a}\int_a^b\widehat{BS}(t)\,dt,
+\]</span></p>
+<p>approximated by the trapezoidal rule. Report the interval and grid. Scores over different intervals are not automatically comparable. Discrimination and probability accuracy assess different targets, as discussed by <a href="https://www.jmlr.org/papers/v21/18-772.html">Haider et al. (2020)</a>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ev <span class="ot">&lt;-</span> <span class="fu">surv_evaluate</span>(fit, test,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">&quot;harrell&quot;</span>, <span class="st">&quot;uno&quot;</span>, <span class="st">&quot;auc&quot;</span>, <span class="st">&quot;brier&quot;</span>, <span class="st">&quot;ibs&quot;</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">60</span>, <span class="dv">90</span>), <span class="at">tau =</span> <span class="dv">90</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ev</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    metric time  estimate lower upper  n events status message</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 harrell   NA 0.7052469    NA    NA 37     36     ok        </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     uno   90 0.7633206    NA    NA 37     36     ok        </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     auc   30 0.8289756    NA    NA 37     36     ok        </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     auc   60 0.7699459    NA    NA 37     36     ok        </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     auc   90 0.8299380    NA    NA 37     36     ok        </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   brier   30 0.1201427    NA    NA 37     36     ok        </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   brier   60 0.1683826    NA    NA 37     36     ok        </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   brier   90 0.1850109    NA    NA 37     36     ok        </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9     ibs   NA 0.1604797    NA    NA 37     36     ok</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ev, <span class="at">metric =</span> <span class="st">&quot;brier&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>By default, <code>G</code> uses stored training outcomes, not the external test. The censoring mechanism must be compatible between samples. Users can provide <code>censoring_data</code> explicitly, or a reference <code>surv_censor_fit()</code> via <code>censoring_model</code> for marginal, stratified or Cox <span class="math inline">\(G(t\mid x)\)</span>. Inspect status/message fields and censoring settings attached to the evaluation. Unstable small <code>G</code> values are not silently clipped.</p>
+<p>Under <span class="math inline">\(\delta=I(T\leq C)\)</span>, tied failures precede censoring. With risk count <span class="math inline">\(R(u)\)</span>, failures <span class="math inline">\(d_E(u)\)</span> and censorings <span class="math inline">\(d_C(u)\)</span>, the reverse KM is <span class="math inline">\(\widehat G(t)=\prod_{u\leq t}\{1-d_C(u)/(R(u)-d_E(u))\}\)</span>, with no decrement when there are no censorings. Simply swapping the event indicator gives the wrong censoring risk set at such ties. This convention agrees with <a href="https://CRAN.R-project.org/package=prodlim">prodlim’s documented reverse estimator</a>.</p>
+</div>
+<div id="calibration-and-uncertainty" class="section level2">
+<h2>Calibration and uncertainty</h2>
+<p>Grouped calibration compares mean predicted survival with within-group KM at a specified horizon. Tied predictions can reduce the number of distinct groups. Small groups and few subjects at risk make calibration unstable. The diagnostic does not retrain or recalibrate the model.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cal <span class="ot">&lt;-</span> <span class="fu">surv_calibrate</span>(fit, test, <span class="at">times =</span> <span class="dv">60</span>, <span class="at">groups =</span> <span class="dv">3</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Low support or collapsed groups in survival calibration; inspect</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; status and message.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cal</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   time group predicted  observed     lower     upper  n events n_risk</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   60     1 0.4019137 0.5000000 0.2084771 0.7360731 12      6      6</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   60     2 0.6431706 0.6923077 0.3733635 0.8717501 13      4      9</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   60     3 0.7713474 0.9166667 0.5389772 0.9878256 12      1     11</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        status                         message</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          ok                                </span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          ok                                </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 low_support Fewer than 3 events by horizon.</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cal)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>An explicit censoring fit makes the calibration assumption consistent with probability evaluation:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">surv_censor_fit</span>(f, train, <span class="at">method =</span> <span class="st">&quot;cox&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>conditional_cal <span class="ot">&lt;-</span> <span class="fu">surv_calibrate</span>(fit, test, <span class="at">times =</span> <span class="dv">60</span>, <span class="at">groups =</span> <span class="dv">3</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">censoring_model =</span> g, <span class="at">n_boot =</span> <span class="dv">100</span>, <span class="at">seed =</span> <span class="dv">14</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Low support or collapsed groups in IPCW calibration; inspect status</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and message.</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>conditional_cal</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   time group predicted  observed     lower     upper  n events n_risk</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   60     1 0.4019137 0.5016142 0.2073431 0.7514831 12      6      6</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   60     2 0.6431706 0.6929878 0.5383166 0.9232341 13      4      9</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   60     3 0.7713474 0.9160202 0.6650618 1.0000000 12      1     11</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   effective_n bootstrap_valid      status                         message</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    11.99978             100          ok                                </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    12.99945             100          ok                                </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    11.99928             100 low_support Fewer than 3 events by horizon.</span></span></code></pre></div>
+<p>For each group, observed survival is normalized IPCW control mass divided by weighted case plus control mass. Event weights use <span class="math inline">\(G(Y_i-\mid x_i)\)</span> and controls use <span class="math inline">\(G(t\mid x_i)\)</span>. This estimator is not a within-group KM curve. Its bootstrap fixes both fitted models and the original groups. Effective sample size, sparse events and undefined replicates remain visible.</p>
+<p><code>surv_evaluate(..., n_boot = 200)</code> resamples evaluation cases while keeping the model and censoring KM fixed. Percentile intervals are conditional on those fits, not uncertainty of the full training/tuning process. For dependent rows, independent case bootstrap intervals are inappropriate; respect sampling units.</p>
+</div>
+<div id="shared-and-nested-resampling" class="section level2">
+<h2>Shared and nested resampling</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">&lt;-</span> <span class="fu">surv_resamples</span>(f, train, <span class="at">folds =</span> <span class="dv">3</span>, <span class="at">seed =</span> <span class="dv">11</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tuned <span class="ot">&lt;-</span> <span class="fu">surv_tune</span>(f, train, <span class="st">&quot;aft&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> <span class="fu">list</span>(<span class="at">distribution =</span> <span class="fu">c</span>(<span class="st">&quot;weibull&quot;</span>, <span class="st">&quot;lognormal&quot;</span>)), <span class="at">resamples =</span> splits)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>tuned<span class="sc">$</span>results</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   candidate distribution mean_cindex  sd_cindex failed_folds seconds</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1      weibull   0.6911427 0.07028425            0    0.00</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2    lognormal   0.6830966 0.07360152            0    0.03</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   mean_estimate sd_estimate  metric</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     0.6911427  0.07028425 harrell</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     0.6830966  0.07360152 harrell</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">surv_score</span>(tuned, test)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.7052469</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>validated <span class="ot">&lt;-</span> <span class="fu">surv_validate</span>(f, train, <span class="at">methods =</span> <span class="fu">c</span>(<span class="st">&quot;km&quot;</span>, <span class="st">&quot;cox&quot;</span>, <span class="st">&quot;aft&quot;</span>),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">grids =</span> <span class="fu">list</span>(<span class="at">aft =</span> <span class="fu">list</span>(<span class="at">distribution =</span> <span class="fu">c</span>(<span class="st">&quot;weibull&quot;</span>, <span class="st">&quot;lognormal&quot;</span>))),</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> splits, <span class="at">inner_folds =</span> <span class="dv">3</span>, <span class="at">seed =</span> <span class="dv">12</span>, <span class="at">metric =</span> <span class="st">&quot;harrell&quot;</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>validated<span class="sc">$</span>summary</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   method  metric time n_total n_valid n_paired      mean         sd mean_common</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     km harrell   NA       3       3        3 0.5000000 0.00000000   0.5000000</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    cox harrell   NA       3       3        3 0.6930439 0.07161832   0.6930439</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    aft harrell   NA       3       3        3 0.6917764 0.07071470   0.6917764</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    sd_common</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 0.00000000</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 0.07161832</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 0.07071470</span></span></code></pre></div>
+<p>Each outer assessment is excluded from tuning and preprocessing. Inner splits are generated within outer training. Failed candidates and warnings remain inspectable. A tuning criterion is not final held-out performance. <code>metric</code> selects inner candidates independently of the order of <code>metrics</code>. Use <code>selection_time</code> for one AUC/Brier tuning horizon when reporting several horizons. A missing required horizon is rejected before fitting. With <code>grid = NULL</code>, only one fixed configuration is evaluated; <code>summary(tuned)</code> states that no hyperparameter search took place.</p>
+<p>Grouped rows and future deployment require grouped or forward temporal designs. The inner design must preserve the outer design, not silently switch to random K-fold. Fold dispersion is descriptive, not an independent-sample standard error. Temporal ordering alone does not ensure that labels had already become known at a historical deployment date. Construct feature availability, follow-up cutoffs and any needed embargo before validating. Do not order by the observed survival response and call that prospective deployment validation.</p>
+<p><code>impute = &quot;median&quot;</code> learns numeric medians and categorical modes separately within each fold, before formula transformations. Missing outcomes, entirely missing training predictors and unsupported new levels are rejected. A final test set is never used to stop neural training early.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
