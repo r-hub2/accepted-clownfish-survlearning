@@ -1,8 +1,14 @@
 ## ----eval=FALSE---------------------------------------------------------------
-# fit <- surv_tune(Surv(time, event) ~ temperature + age, data,
-#   method = "svm", grid = list(cost = c(0.01, 0.1, 1)),
-#   params = list(solver = "clarabel"), folds = 3, cache = TRUE)
-# fit$results
-# surv_diagnostics(fit)
-# surv_predict(fit, newdata)
+# linear <- surv_tune(Surv(time, event) ~ temperature + age, data,
+#   method = "svm", grid = list(cost = 10^(-3:3)),
+#   params = list(kernel = "linear"), folds = 3, cache = TRUE)
+# 
+# additive <- surv_tune(Surv(time, event) ~ temperature + age, data,
+#   method = "svm", grid = list(cost = 10^(-3:3)),
+#   params = list(kernel = "additive"), folds = 3, cache = TRUE)
+# 
+# linear$results
+# additive$results
+# surv_diagnostics(additive)
+# surv_predict(additive, newdata)
 

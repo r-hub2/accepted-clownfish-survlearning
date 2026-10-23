@@ -1,12 +1,13 @@
 #' Available Survival Learning Methods
 #'
-#' List engines, prediction capabilities, and optional dependency availability.
+#' List engines, prediction capabilities, and installed dependency availability.
 #' A risk score always increases with risk; it is not a failure probability.
 #' Penalized AFT methods use the semiparametric Gehan estimator, not a
 #' penalized parametric likelihood.
 #' The `installed` column describes the default configuration. Native SVM
-#' kernels need no external SVM engine, but the default solver needs Clarabel;
-#' the explicit Newton solver is available without it.
+#' kernels need no external SVM engine. The original regression solver uses
+#' Clarabel or OSQP; ranking, hybrid and IPCW use native R/C++ and stats.
+#' All supported engine and solver packages are required installation dependencies.
 #' @return A data frame with one row per supported method.
 #' @export
 #' @examples
@@ -34,13 +35,13 @@ surv_methods <- function() {
       engine = "survival", predictions = c("risk", "time", "survival"),
       defaults = list(distribution = "weibull")),
     aft_lasso = list(description = "Semiparametric AFT with LASSO (Gehan loss)",
-      engine = "penAFT", predictions = "risk",
+      engine = "survlearning", predictions = "risk",
       defaults = list(lambda = 0.1, max_iter = 10000L, tolerance = 0.00025)),
     aft_ridge = list(description = "Semiparametric AFT with ridge (Gehan loss)",
-      engine = "penAFT", predictions = "risk",
+      engine = "survlearning", predictions = "risk",
       defaults = list(lambda = 0.1, max_iter = 10000L, tolerance = 0.00025)),
     aft_elasticnet = list(description = "Semiparametric AFT with elastic net (Gehan loss)",
-      engine = "penAFT", predictions = "risk",
+      engine = "survlearning", predictions = "risk",
       defaults = list(lambda = 0.1, alpha = 0.5, max_iter = 10000L, tolerance = 0.00025)),
     cox = list(description = "Cox proportional hazards (Efron ties)",
       engine = "survival", predictions = c("risk", "survival"), defaults = list()),
@@ -57,7 +58,7 @@ surv_methods <- function() {
       engine = "rpart", predictions = "risk",
       defaults = list(cp = 0.01, min_node = 10L, max_depth = 5L)),
     rsf = list(description = "Random survival forest (log-rank splits)",
-      engine = "randomForestSRC", predictions = c("risk", "survival"),
+      engine = "survlearning", predictions = c("risk", "survival"),
       defaults = list(trees = 200L, mtry = NULL, min_node = 15L,
         splits = 5L, threads = 1L)),
     boosting = list(description = "Gradient-boosted trees with Cox loss",
@@ -79,9 +80,10 @@ surv_methods <- function() {
     svm = list(description = "Censored support vector regression",
       engine = "stats", predictions = "risk",
       defaults = list(cost = 0.1, kernel = "linear", solver = "clarabel",
-        tolerance = 1e-8, max_iter = 100000L, memory_limit_mb = 2048,
+        tolerance = 1e-12, max_iter = 100000L, memory_limit_mb = 2048,
+        prediction_tolerance = 1e-8,
         collapse_duplicates = TRUE))
-  ), .reference_specs())
+  ), .reference_specs(), .svm_learning_specs())
 }
 
 .method <- function(method) {
@@ -154,9 +156,11 @@ surv_methods <- function() {
   }
   if (method == "svm") {
     if (!is.character(defaults$solver) || length(defaults$solver) != 1L ||
-        is.na(defaults$solver) || !defaults$solver %in% c("quadprog", "osqp", "clarabel", "newton")) {
-      stop("'solver' must be quadprog, osqp, clarabel or newton.", call. = FALSE)
+        is.na(defaults$solver) || !defaults$solver %in% c("osqp", "clarabel")) {
+      stop("'solver' must be clarabel or osqp for the censored-regression primal. ",
+        "The legacy newton/quadprog conditioned objective is no longer fitted.", call. = FALSE)
     }
+    .positive_scalar(defaults$prediction_tolerance, "prediction_tolerance", zero = TRUE)
     .positive_scalar(defaults$memory_limit_mb, "memory_limit_mb")
     if (!is.logical(defaults$collapse_duplicates) || length(defaults$collapse_duplicates) != 1L ||
         is.na(defaults$collapse_duplicates)) stop("'collapse_duplicates' must be TRUE or FALSE.", call. = FALSE)
@@ -164,6 +168,7 @@ surv_methods <- function() {
   if (method %in% names(.reference_specs())) {
     defaults <- .reference_parameters(method, defaults, p)
   }
+  if (method %in% .svm_learning_methods()) defaults <- .svm_learning_parameters(method, defaults)
   defaults
 }
 

@@ -1,6 +1,6 @@
 .new_engine_skip <- function(method) {
   package <- survlearning:::.reference_specs()[[method]]$engine
-  skip_if_not(requireNamespace(package, quietly = TRUE), paste("Missing optional engine", package))
+  expect_true(requireNamespace(package, quietly = TRUE), info = package)
 }
 
 .new_engine_params <- function(method) {
@@ -117,7 +117,7 @@ test_that("Cox splines preserve training knots and native predictions", {
   expect_identical(attr(fit$engine$terms, "predvars"), calls)
 })
 
-for (id in c("flexsurv", "coxboost", "ranger", "aorsf")) {
+for (id in c("coxboost", "ranger", "aorsf")) {
   local({
     method <- id
     test_that(paste("new engine agrees with its native API:", method), {
@@ -128,8 +128,6 @@ for (id in c("flexsurv", "coxboost", "ranger", "aorsf")) {
       x <- survlearning:::.new_design(fit$design, new)
       times <- c(2, 5)
       expected <- switch(method,
-        flexsurv = t(vapply(summary(fit$engine, newdata = as.data.frame(x),
-          t = times, type = "survival", ci = FALSE), function(row) row$est, numeric(2L))),
         coxboost = predict(fit$engine, newdata = x, type = "risk", times = times,
           at.step = fit$params$steps),
         ranger = {
@@ -325,7 +323,7 @@ test_that("new covariate engines retain single-predictor and single-row dimensio
   data <- example_data(100L)
   for (method in setdiff(names(survlearning:::.reference_specs()), "km")) {
     package <- survlearning:::.reference_specs()[[method]]$engine
-    if (!requireNamespace(package, quietly = TRUE)) next
+    expect_true(requireNamespace(package, quietly = TRUE), info = package)
     fit <- surv_fit(survival::Surv(time, event) ~ x, data, method,
       .new_engine_params(method), seed = 8L)
     new <- data[1L, "x", drop = FALSE]

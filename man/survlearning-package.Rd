@@ -6,10 +6,18 @@
 \alias{survlearning-package}
 \title{Unified Statistical Learning for Survival and Reliability}
 \description{
-A formula-based interface to optional survival model engines, reusable
+A formula-based interface to integrated survival model engines, reusable
 validation, native predictions and censoring-aware evaluation. Start with
 [surv_methods()], [surv_fit()], [surv_tune()], [surv_predict()],
 [surv_score()], [surv_evaluate()] and [surv_validate()].
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ramospedroluiz/survlearning}
+  \item Report bugs at \url{https://github.com/ramospedroluiz/survlearning/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Pedro Luiz Ramos \email{pedro.ramos@uc.cl}
@@ -17,6 +25,15 @@ validation, native predictions and censoring-aware evaluation. Start with
 Authors:
 \itemize{
   \item Pedro Luiz Ramos \email{pedro.ramos@uc.cl}
+}
+
+Other contributors:
+\itemize{
+  \item Hemant Ishwaran (Included RF-SRC code) [contributor]
+  \item Udaya B. Kogalur (Included RF-SRC code) [contributor]
+  \item Christopher Jackson (Adapted Royston-Parmar initialization) [contributor]
+  \item Aaron J. Molstad (Adapted Gehan ADMM) [contributor]
+  \item Piotr M. Suder (Adapted Gehan ADMM) [contributor]
 }
 
 }
