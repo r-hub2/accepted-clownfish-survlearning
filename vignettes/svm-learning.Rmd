@@ -175,6 +175,12 @@ cross analysis folds. IPCW nuisance fits use only each analysis fold. Every
 method retains all rows and the exact declared kernel; failed candidates
 cannot win. The native optimization uses R's L-BFGS-B and the package's compiled
 pair evaluator, with no additional dependency or external runtime.
+A line-search termination may occur at floating-point precision even after
+the requested accuracy has been attained. Such a fit is accepted only if
+the unchanged relative-gradient check and, for ranking, the objective-gap
+bound both pass. Diagnostics distinguish `stationarity_verified` from
+`reported_success` and retain the optimizer's original code and message.
+Iteration-limit exits and other optimizer failures remain ineligible.
 `lambda` and the original regression `cost` are not interchangeable.
 
 The unit tests compare the pair evaluator with full enumeration, check analytic

@@ -97,6 +97,9 @@ Harrell evaluation also admits event/censoring ties in recorded time, unlike
 the strict ranking training pairs. The additive representation
 retains every distinct training coordinate. L-BFGS-B fits are checked for
 stationarity; ranking also reports a strong-convexity objective-gap bound.
+A line-search termination is accepted only when these same accuracy checks
+pass. It is labeled \code{stationarity_verified}, with the original optimizer
+code and message retained; iteration-limit and other failures are rejected.
 Stationarity means the Euclidean gradient norm is at most tolerance times
 max(1, parameter norm). Ranking also requires its gap bound to be at most
 tolerance times max(1, absolute objective). Optimizer success is required.

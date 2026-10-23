@@ -35,7 +35,7 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: yes
-Packaged: 2026-10-23 23:39:11 UTC; pedro
+Packaged: 2026-10-23 23:54:17 UTC; pedro
 Author: Pedro Luiz Ramos [aut, cre],
   Hemant Ishwaran [ctb] (Included RF-SRC code),
   Udaya B. Kogalur [ctb] (Included RF-SRC code),

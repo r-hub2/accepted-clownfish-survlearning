@@ -1,5 +1,8 @@
 # survlearning 0.3.4
 
+* Distinguish an accuracy-verified line-search termination from optimizer
+  success. Keep the same stationarity and ranking gap tolerances, and retain
+  the original optimizer diagnostics. Iteration-limit failures remain rejected.
 * Center scores inside the ranking pair evaluator to preserve offset invariance
   in its moment calculations, without changing the loss or regularization.
 * Add independent hybrid and positive-epsilon IPCW quadratic-program checks,

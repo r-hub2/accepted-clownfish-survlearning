@@ -132,6 +132,24 @@
   }
 }
 
+.svm_learning_acceptance <- function(result, evaluated, method, params) {
+  stationarity <- sqrt(sum(evaluated$gradient^2))
+  gap_bound <- if (method == "svm_rank") stationarity^2 / (2 * params$lambda) else NA_real_
+  # Roundoff can stop the line search after the requested accuracy is attained.
+  line_search <- identical(result$convergence, 52L) &&
+    is.character(result$message) && length(result$message) == 1L &&
+    !is.na(result$message) && grepl("ABNORMAL_TERMINATION_IN_LNSRCH", result$message, fixed = TRUE)
+  accepted <- (result$convergence == 0L || line_search) &&
+    all(is.finite(result$par)) && is.finite(evaluated$value) &&
+    is.finite(stationarity) &&
+    stationarity <= params$tolerance * max(1, sqrt(sum(result$par^2)))
+  if (method == "svm_rank") accepted <- accepted &&
+    gap_bound <= params$tolerance * max(1, abs(evaluated$value))
+  list(accepted = isTRUE(accepted), gradient_norm = stationarity,
+    gap_bound = gap_bound, status = if (!isTRUE(accepted)) "reported_failure" else
+      if (line_search) "stationarity_verified" else "reported_success")
+}
+
 .svm_learning_fit <- function(method, x, y, params, cache = NULL) {
   estimate <- 8 * nrow(x) * (40 * ncol(x) + 120) / 1024^2
   .svm_memory_check(estimate, params)
@@ -149,12 +167,10 @@
     control = list(maxit = params$max_iter, factr = 10,
       pgtol = params$tolerance * min(1, params$lambda) / max(10, sqrt(length(initial))), lmm = 20L))
   evaluated <- objective(result$par)
-  stationarity <- sqrt(sum(evaluated$gradient^2))
-  gap_bound <- if (method == "svm_rank") stationarity^2 / (2 * params$lambda) else NA_real_
-  accepted <- result$convergence == 0L && all(is.finite(result$par)) &&
-    is.finite(evaluated$value) && stationarity <= params$tolerance * max(1, sqrt(sum(result$par^2)))
-  if (method == "svm_rank") accepted <- accepted && gap_bound <= params$tolerance * max(1, abs(evaluated$value))
-  if (!accepted) stop("Survival SVM did not satisfy the convergence/stationarity checks (",
+  checked <- .svm_learning_acceptance(result, evaluated, method, params)
+  stationarity <- checked$gradient_norm
+  gap_bound <- checked$gap_bound
+  if (!checked$accepted) stop("Survival SVM did not satisfy the convergence/stationarity checks (",
     method, ", optimizer status ", result$convergence, ", gradient norm ",
     signif(stationarity, 4), "). No model was accepted.", call. = FALSE)
   coefficients <- .svm_learning_map(result$par[seq_len(p)], design)
@@ -163,7 +179,7 @@
     knots = design$knots, convergence = 0L, response_center = 0,
     prediction_resolution = params$prediction_tolerance,
     censoring = if (is.null(response)) NULL else response$censoring,
-    diagnostics = list(status = "reported_success", observations = nrow(x),
+    diagnostics = list(status = checked$status, observations = nrow(x),
       events = sum(y[, 2L]), comparable_pairs = evaluated$pairs,
       feature_dimension = p, objective = evaluated$value, loss = evaluated$loss,
       gradient_norm = stationarity, strong_convexity_gap_bound = gap_bound,

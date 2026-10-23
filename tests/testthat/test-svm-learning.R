@@ -201,11 +201,43 @@ test_that("new variants preserve risk direction, serialization, and native capab
     expect_error(surv_predict(model, d, type = "survival", times = 1), "does not provide")
     expect_error(surv_predict(model, d, type = "time"), "does not provide")
     expect_equal(model$n, nrow(d))
-    expect_equal(model$diagnostics$convergence$status, "reported_success")
+    expect_true(model$diagnostics$convergence$status %in%
+      c("reported_success", "stationarity_verified"))
   }
   expect_error(surv_fit(formula, d, "svm_ipcw"), "horizon")
   expect_error(surv_fit(formula, d, "svm_hybrid", list(rank_weight = 1)), "strictly")
   expect_error(surv_fit(formula, d, "svm_rank", list(max_iter = 1L)), "No model")
+})
+
+test_that("line-search exits require the same independent accuracy certificate", {
+  result <- list(par = c(.2, -.1), convergence = 52L,
+    message = "ERROR: ABNORMAL_TERMINATION_IN_LNSRCH")
+  evaluated <- list(value = .4, gradient = c(1e-8, -1e-8))
+  params <- list(lambda = .01, tolerance = 1e-6)
+  for (method in .svm_learning_methods()) {
+    checked <- .svm_learning_acceptance(result, evaluated, method, params)
+    expect_true(checked$accepted)
+    expect_identical(checked$status, "stationarity_verified")
+    bad <- evaluated
+    bad$gradient <- c(1e-3, 0)
+    expect_false(.svm_learning_acceptance(result, bad, method, params)$accepted)
+    for (code in c(1L, 51L)) {
+      failed <- result
+      failed$convergence <- code
+      expect_false(.svm_learning_acceptance(failed, evaluated, method, params)$accepted)
+    }
+    failed <- result
+    failed$message <- "ERROR: other failure"
+    expect_false(.svm_learning_acceptance(failed, evaluated, method, params)$accepted)
+    bad$gradient <- c(NA_real_, 0)
+    expect_false(.svm_learning_acceptance(result, bad, method, params)$accepted)
+  }
+  params$lambda <- 1e-12
+  expect_false(.svm_learning_acceptance(result, evaluated, "svm_rank", params)$accepted)
+  engine <- structure(list(diagnostics = list(status = "stationarity_verified",
+    optimizer_status = 52L)), class = "survlearning_svm_learning")
+  expect_identical(.engine_convergence(engine),
+    list(status = "stationarity_verified", code = 52L))
 })
 
 test_that("new SVM tuning caches only within folds and supports parallel resume", {

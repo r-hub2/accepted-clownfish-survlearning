@@ -62,6 +62,9 @@
 #' the strict ranking training pairs. The additive representation
 #' retains every distinct training coordinate. L-BFGS-B fits are checked for
 #' stationarity; ranking also reports a strong-convexity objective-gap bound.
+#' A line-search termination is accepted only when these same accuracy checks
+#' pass. It is labeled `stationarity_verified`, with the original optimizer
+#' code and message retained; iteration-limit and other failures are rejected.
 #' Stationarity means the Euclidean gradient norm is at most tolerance times
 #' max(1, parameter norm). Ranking also requires its gap bound to be at most
 #' tolerance times max(1, absolute objective). Optimizer success is required.
@@ -268,6 +271,10 @@ surv_fit <- function(formula, data, method = "cox", params = list(), seed = NULL
 }
 
 .engine_convergence <- function(engine) {
+  if (inherits(engine, "survlearning_svm_learning")) {
+    return(list(status = engine$diagnostics$status,
+      code = engine$diagnostics$optimizer_status))
+  }
   if (is.list(engine) && is.list(engine$opt) &&
       is.numeric(engine$opt$convergence) && length(engine$opt$convergence) == 1L) {
     return(list(status = if (engine$opt$convergence == 0) "reported_success" else "reported_failure",
